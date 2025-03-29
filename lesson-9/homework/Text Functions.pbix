@@ -1,0 +1,9 @@
+BirthDate = 
+VAR StartPosition = SEARCH("<BirthDate>", 'Person Person'[Demographics], 1,0) + 11
+VAR EndPosition = SEARCH("Z</BirthDate>", 'Person Person'[Demographics], StartPosition,0 )
+VAR Length = EndPosition - StartPosition
+RETURN
+ IF(StartPosition>10 && EndPosition>StartPosition,
+    MID('Person Person'[Demographics], StartPosition, Length),
+    Blank())
+
