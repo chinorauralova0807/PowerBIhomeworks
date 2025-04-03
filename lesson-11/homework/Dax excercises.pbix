@@ -1,1 +1,41 @@
+consecutive month buyers = 
+Var Customers=
+VALUES(Orders[Customer])
+Var Customerswithconsecutive=
+FILTER(
+    Customers,
+    Var CurrentCustomer=Orders[Customer]
+    Var DistinctMonths=
+    DISTINCT(
+        SELECTCOLUMNS(
+            FILTER(
+                Orders,Orders[Customer]=CurrentCustomer),
+                "Year Month",YEAR(Orders[Customer]) *12 + Month(Orders[OrderDate])
+        )
+    )
+    Var shiftedmonths=
+    ADDCOLUMNS(
+        DistinctMonths,"Shifted",
+        [Year Month] +1
+    )
+    Var Intersection =
+    INTERSECT(
+        SELECTCOLUMNS(DistinctMonths,
+        "Month",
+        [Year Month]),
+    SELECTCOLUMNS(
+        shiftedmonths,"Month",[Shifted]
+    )
+    )
+    RETURN COUNTROWS(
+        Intersection)>0
+)
+Return 
+CONCATENATEX(Customerswithconsecutive,Orders[Customer],
+", "
+)
+
+                
+
+
 
