@@ -1,1 +1,22 @@
+TopEmployeeWithPayment = 
+VAR MaxRate = MAXX(
+    FILTER(EmployeesDetails, NOT(ISBLANK(EmployeesDetails[Rate]))),
+    EmployeesDetails[Rate]
+)
+VAR TopEmp =
+    CALCULATETABLE(
+        TOPN(1, 
+            FILTER(EmployeesDetails, EmployeesDetails[Rate] = MaxRate),
+            EmployeesDetails[FullName], ASC
+        ),
+        ALLSELECTED(EmployeesDetails)
+    )
+VAR EmpName = SELECTCOLUMNS(TopEmp, "Name", EmployeesDetails[FullName])
+RETURN
+    IF(
+        ISBLANK(MaxRate),
+        "No data",
+        CONCATENATE(EmpName, " ($" & FORMAT(MaxRate, "0.00") & ")")
+    )
+
 
